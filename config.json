@@ -1,0 +1,11 @@
+{
+  "targetSystem": {
+    "baseREST": "https://xxxxxxxxxxxx/rest/2.0/",
+    "username": "xxxxxx",
+    "password": "xxxxxxxx",
+    "landingZone": "DMZz",
+    "landingZoneId": "",
+    "suffix": "WOFFLES",
+    "sourceDir": "wof"
+  }
+}
