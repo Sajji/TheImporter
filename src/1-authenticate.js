@@ -50,4 +50,4 @@ async function startAuthentication() {
 }
 
 // Call the main authentication function
-startAuthentication();
+module.exports = startAuthentication;

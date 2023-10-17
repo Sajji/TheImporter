@@ -1,7 +1,7 @@
 const axios = require('axios');
 const fs = require('fs').promises;
 const path = require('path');
-const configFile = require('./config.json');
+const configFile = require('../config.json');
 
 async function addAndUpdateCommunities() {
   try {
@@ -26,11 +26,9 @@ async function addAndUpdateCommunities() {
       const payload = {
         id: community.id,
         name: community.name,
+        description: community.description
       };
-
-      if (community.description) {
-        payload.description = community.description;
-      }
+      console.log(payload);
 
       await axios.post(`${baseREST}communities`, payload, axiosConfig);
       console.log(`POST request sent for community ID: ${community.id}`);
@@ -41,12 +39,9 @@ async function addAndUpdateCommunities() {
       const payload = {
         id: community.id,
         name: community.name,
+        description: community.description,
         parentId: community.parentId,
       };
-
-      if (community.description) {
-        payload.description = community.description;
-      }
 
       await axios.patch(`${baseREST}communities/${community.id}`, payload, axiosConfig);
       console.log(`PATCH request sent for community ID: ${community.id}`);

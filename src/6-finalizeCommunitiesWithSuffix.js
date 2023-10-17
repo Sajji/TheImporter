@@ -14,19 +14,23 @@ async function updateNamesWithSuffix() {
     const config = JSON.parse(configData);
     const suffix = config.targetSystem.suffix;
 
-    // Update the "name" values with the suffix
+    // Get current date and time in a specific format e.g., YYYY-MM-DD_HH-MM
+    const now = new Date();
+    const dateTimeSuffix = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}`;
+
+    // Update the "name" values with the original suffix and the date-time suffix
     const updatedCommunitiesWithSuffix = updatedCommunities.map((community) => {
-      community.name += ` -- ${suffix}`;
+      community.name += ` -- ${suffix} -- ${dateTimeSuffix}`;
       return community;
     });
 
     // Save the updated communities back to the original updatedCommunities.json file
     await fs.writeFile(updatedCommunitiesFilePath, JSON.stringify(updatedCommunitiesWithSuffix, null, 2), 'utf8');
-    console.log('Names updated with suffix in updatedCommunities.json.');
+    console.log('Names updated with suffix and date-time in updatedCommunities.json.');
   } catch (error) {
-    console.error('Error updating names with suffix:', error.message);
+    console.error('Error updating names with suffix and date-time:', error.message);
   }
 }
 
-// Call the function to update names with suffix
+// Call the function to update names with suffix and date-time
 module.exports = updateNamesWithSuffix;
