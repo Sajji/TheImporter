@@ -1,11 +1,11 @@
 {
   "targetSystem": {
-    "baseREST": "https://xxxxxxxxxxxx/rest/2.0/",
-    "username": "xxxxxx",
-    "password": "xxxxxxxx",
-    "landingZone": "DMZz",
+    "sourceDir": "",
+    "baseREST": "https://${domain}/rest/2.0/",
+    "username": "",
+    "password": "",
+    "landingZone": "",
     "landingZoneId": "",
-    "suffix": "WOFFLES",
-    "sourceDir": "wof"
+    "suffix": ""
   }
 }
