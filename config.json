@@ -1,11 +1,11 @@
 {
   "targetSystem": {
-    "sourceDir": "",
-    "baseREST": "https://${domain}/rest/2.0/",
-    "username": "",
-    "password": "",
-    "landingZone": "",
-    "landingZoneId": "",
-    "suffix": ""
+    "sourceDir": "./backupData",
+    "baseREST": "https://fedworld.collibra.com/rest/2.0/",
+    "username": "SysAdmin",
+    "password": "woffles",
+    "landingZone": "gmoney",
+    "landingZoneId": "80155a20-5d70-416b-bc90-cb2a71a619e5",
+    "suffix": "wofzz"
   }
 }

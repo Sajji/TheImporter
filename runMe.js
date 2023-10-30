@@ -1,94 +1,152 @@
-const fs = require('fs');
+const axios = require('axios');
+const fs = require('fs').promises;
 const readline = require('readline');
+const path = require('path');
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
+async function main() {
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+    });
 
-// Function to validate if a directory exists
-function directoryExists(path) {
-  try {
-    return fs.statSync(path).isDirectory();
-  } catch (err) {
-    return false;
-  }
-}
+    // Function to prompt user question and return the answer
+    const question = (query) => new Promise(resolve => rl.question(query, resolve));
 
-// Function to filter JSON files
-function filterJSONFiles(files) {
-  return files.filter((file) => file.endsWith('.json'));
-}
-
-// Function to verify directory based on summary.json
-function verifyDirectory(sourceDir) {
-  const summaryPath = `${sourceDir}/summary.json`;
-  if (fs.existsSync(summaryPath)) {
     try {
-      const summaryData = JSON.parse(fs.readFileSync(summaryPath, 'utf8'));
+        // Question 1
+        const sourceDir = await question('Location of the backup folder? ');
+        const summaryPath = path.join(sourceDir, 'summary.json');
+        try {
+            await fs.access(summaryPath);
+        } catch (err) {
+            throw new Error('Backup folder does not exist or summary.json not found in the folder.');
+        }
 
-      // Verify assets files
-      const assetsFiles = Object.keys(summaryData.assetsFilesDetails);
-      const assetsFilesCount = assetsFiles.length;
-      const actualAssetsFiles = filterJSONFiles(assetsFiles);
+        const configPath = 'config.json';
+        try {
+            await fs.access(configPath);
+            const existingConfig = JSON.parse(await fs.readFile(configPath, 'utf8'));
+            console.log('Existing configuration found:', existingConfig);
 
-      if (
-        assetsFilesCount === actualAssetsFiles.length &&
-        assetsFiles.every((file) => actualAssetsFiles.includes(file))
-      ) {
-        console.log('Assets files are verified.');
+            const useExistingConfig = await question('Do you want to use the existing configuration? (yes/no) ');
 
-        // Update config.json with sourceDir
-        updateConfigFile(sourceDir);
-      } else {
-        console.error('Assets files verification failed.');
-      }
+            if (useExistingConfig.toLowerCase().startsWith('y')) {
+                console.log('Using existing configuration. Exiting.');
+                rl.close();
+                return;
+            }
+        } catch (err) {
+            // No existing config found, continue to the next questions
+        }
 
-      // Verify specific files
-      const specificFiles = Object.keys(summaryData.specificFilesDetails);
+        // Question 2
+        const domain = await question('Domain of your target system? ');
+        const baseREST = `https://${domain}/rest/2.0/`;
 
-      const missingSpecificFiles = specificFiles.filter(
-        (file) => !fs.existsSync(`${sourceDir}/${file}`)
-      );
+        // Questions 3 and 4
+// Questions 3 and 4
+let username = await question("What's the username? ");
+let password = await question("What's the password? ");
 
-      if (missingSpecificFiles.length === 0) {
-        console.log('Specific files are verified.');
-      } else {
-        console.error('Specific files verification failed. Missing files:', missingSpecificFiles);
-      }
-    } catch (err) {
-      console.error('Error parsing summary.json:', err);
-    }
-  } else {
-    console.error('The summary.json file does not exist in the directory.');
-  }
-}
+// Verify connectivity and authenticate
+let attempts = 3;
+let isAuthenticated = false;
+let cookie = '';  // Declare these variables outside the loop so you can use them later.
+let csrfToken = '';
 
-// Function to update the config.json file with sourceDir
-function updateConfigFile(sourceDir) {
-  const configPath = './config.json';
-
-  if (fs.existsSync(configPath)) {
+while (attempts > 0 && !isAuthenticated) {
     try {
-      const configData = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-      configData.targetSystem.sourceDir = sourceDir;
+        const authResponse = await axios.post(
+            `${baseREST}auth/sessions`,
+            { username, password },
+            { withCredentials: true }
+        );
 
-      fs.writeFileSync(configPath, JSON.stringify(configData, null, 2), 'utf8');
-      console.log('config.json updated with sourceDir:', sourceDir);
+        if (authResponse.status === 200 && authResponse.data.csrfToken) {
+            isAuthenticated = true;
+
+            // Extract the 'set-cookie' header and csrfToken from the authentication response
+            cookie = authResponse.headers['set-cookie'].join('; ');
+            csrfToken = authResponse.data.csrfToken;
+
+        } else {
+            attempts--;
+            if (attempts > 0) {
+                console.log(`Authentication failed. You have ${attempts} attempt(s) left.`);
+                // Optionally, re-prompt the user for credentials if you want them to try with different credentials:
+                username = await question("What's the username? ");
+                password = await question("What's the password? ");
+            } else {
+                throw new Error('Authentication failed after 3 attempts.');
+            }
+        }
     } catch (error) {
-      console.error('Error updating config.json:', error.message);
+        attempts--;
+        if (attempts > 0) {
+            console.log(`Error during authentication. You have ${attempts} attempt(s) left. Please try again.`);
+            // Optionally, re-prompt the user for credentials if you want them to try with different credentials:
+            username = await question("What's the username? ");
+            password = await question("What's the password? ");
+        } else {
+            throw new Error('Authentication failed after 3 attempts due to recurring errors.');
+        }
     }
-  } else {
-    console.error('config.json does not exist.');
-  }
 }
 
-// Prompt the user for the source directory
-rl.question('Enter the location of the sourceBackups directory: ', (sourceDir) => {
-  if (directoryExists(sourceDir)) {
-    verifyDirectory(sourceDir);
-  } else {
-    console.error('The directory does not exist.');
-  }
-  rl.close();
-});
+// Prepare the authorization headers with the csrfToken and cookies
+const headers = {
+    'Authorization': `Bearer ${csrfToken}`,
+    'Cookie': cookie,
+};
+
+        // Question 5
+        const landingZone = await question('Landing zone? ');
+        let landingZoneId = '';
+        try {
+            // Checking if the community exists
+            const getCommunityResponse = await axios.get(
+                `${baseREST}communities?name=${encodeURIComponent(landingZone)}&nameMatchMode=EXACT`,
+                { headers }
+            );
+
+            if (getCommunityResponse.data && getCommunityResponse.data.results && getCommunityResponse.data.results.length > 0) {
+                landingZoneId = getCommunityResponse.data.results[0].id;  // Existing community ID
+            } else {
+                // If not exist, create new one
+                const createCommunityResponse = await axios.post(
+                    `${baseREST}communities`,
+                    { name: landingZone, description: landingZone },
+                    { headers }
+                );
+                landingZoneId = createCommunityResponse.data.id;  // New community ID
+            }
+        } catch (error) {
+            throw new Error('Error verifying or creating landing zone.');
+        }
+
+        // Last question
+        const suffix = await question('What suffix do you want to use? ');
+
+        const config = {
+            targetSystem: {
+                sourceDir,
+                baseREST,
+                username,
+                password,
+                landingZone,
+                landingZoneId,
+                suffix,
+            },
+        };
+
+        await fs.writeFile('config.json', JSON.stringify(config, null, 2));
+        console.log('Config saved successfully.');
+    } catch (error) {
+        console.error('An error occurred:', error.message);
+    } finally {
+        rl.close();
+    }
+}
+
+// Start the script
+main();

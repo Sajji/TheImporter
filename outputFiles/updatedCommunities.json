@@ -1,14 +1,17 @@
 [
   {
-    "id": "302c5f38-3f38-4ace-b1e2-287af1051b71",
-    "name": "Federal Railroads -- fedworld -- WOFFLES",
-    "parentId": "d40171bb-314a-4515-bfc3-339c39e2e699",
-    "parentName": "DMZz"
+    "id": "0908cdd7-da06-48cf-9926-215d62dc7e83",
+    "name": "GIS Community",
+    "newName": "GIS Community - fedworld",
+    "description": "",
+    "parentId": "80155a20-5d70-416b-bc90-cb2a71a619e5",
+    "parentName": "gmoney"
   },
   {
-    "id": "1dd56015-5e99-4a0b-aa54-214b249de466",
-    "name": "FRA Jr -- fedworld -- WOFFLES",
-    "parentId": "302c5f38-3f38-4ace-b1e2-287af1051b71",
-    "parentName": "Federal Railroads"
+    "id": "e93a95b5-40e7-4c08-af23-16bece6507f4",
+    "name": "GIS Schemas",
+    "newName": "GIS Schemas - fedworld",
+    "parentId": "0908cdd7-da06-48cf-9926-215d62dc7e83",
+    "parentName": "GIS Community"
   }
 ]
