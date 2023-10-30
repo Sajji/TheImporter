@@ -45,9 +45,8 @@ async function migrateDomainTypes() {
         try {
             await axios.get(`${baseREST}domainTypes/${domainType.id}`, { headers });
             console.log(`DomainType with name "${domainType.name}" already exists.`);
-        } catch (error) {
-            if (error.response && error.response.status === 404) {
-                // Create the domainType
+        } catch {
+
                 await axios.post(
                     `${baseREST}domainTypes`,
                     {
@@ -58,9 +57,7 @@ async function migrateDomainTypes() {
                     { headers }
                 );
                 console.log(`DomainType with name "${domainType.newName}" has been created.`);
-            } else {
-                console.error(`Error checking/creating domainType "${domainType.name}": ${error.message}`);
-            }
+
         }
     }
 
@@ -75,8 +72,8 @@ async function migrateDomainTypes() {
                 { headers }
             );
             console.log(`Parent set for domainType "${domainType.newName}".`);
-        } catch (error) {
-            console.error(`Error setting parent for domainType "${domainType.name}": ${error.message}`);
+        } catch {
+            console.log(`Error setting parent for domainType "${domainType.name}"`);
         }
     }
 }

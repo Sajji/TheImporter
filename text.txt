@@ -1,0 +1,65 @@
+So next I want to create a file called 8-MigrateAttributes.js
+Similar to the previous example, I want to iterate through all of the files beginning with "asset_" in my sourceDir folder. Each of those files looks like this:
+
+[
+  {
+    "id": "000171c7-4e5a-4931-a899-a1cfa4d272cf",
+    "name": "0a658/Accela/Accela/Accela_Inspections_Utilities_arcmap (MapServer)/Pro Rata Projects - PU/OBJECTID",
+    "displayName": "0a658/Accela/Accela/Accela_Inspections_Utilities_arcmap (MapServer)/Pro Rata Projects - PU/OBJECTID",
+    "domainId": "e2e8817b-7ae4-46d7-a010-83a470317bec",
+    "domainName": "ESRI Chesapeake",
+    "typeId": "a35f8788-e2ed-412d-b7bb-b00b4f9702d4",
+    "typeName": "ESRI Field",
+    "attributes": [
+      {
+        "assetId": "000171c7-4e5a-4931-a899-a1cfa4d272cf",
+        "id": "0bbd8586-7156-4897-9150-6e351753181f",
+        "typeId": "f0e70247-31bb-45bd-aa9f-ed7230e371c8",
+        "name": "Type",
+        "stringValue": "esriFieldTypeOID"
+      },
+      {
+        "assetId": "000171c7-4e5a-4931-a899-a1cfa4d272cf",
+        "id": "124b07f4-b973-4495-a20b-adf0b383137d",
+        "typeId": "8e965ce6-989d-4d34-9db5-cc95f0bbc246",
+        "name": "Alias",
+        "stringValue": "OBJECTID"
+      },
+      {
+        "assetId": "000171c7-4e5a-4931-a899-a1cfa4d272cf",
+        "id": "f172d995-2db9-49fa-9871-4b59d1438e84",
+        "typeId": "00000000-0000-0000-0000-000000000258",
+        "name": "URL",
+        "stringValue": "https://gis.cityofchesapeake.net/mapping/rest/services/Accela/Accela_Inspections_Utilities_arcmap/MapServer/1"
+      },
+      {
+        "assetId": "000171c7-4e5a-4931-a899-a1cfa4d272cf",
+        "id": "8c4c128a-cd1d-4504-90c8-b08eda65b319",
+        "typeId": "d6b8823d-4c13-45fc-9306-bd340f26acbc",
+        "name": "Nullable",
+        "booleanValue": false
+      },
+      {
+        "assetId": "000171c7-4e5a-4931-a899-a1cfa4d272cf",
+        "id": "b3a72706-b2e6-4bef-b3e6-83b703a97314",
+        "typeId": "afe3a3d3-9504-41a1-8c90-66309027e12d",
+        "name": "Editable",
+        "booleanValue": false
+      }
+    ],
+    "relations": [
+      {
+        "relationId": "d79fa1d0-198d-4d4a-aa88-60c8e70f0984",
+        "relationType": "4d5543dc-36d9-4483-b83b-476792a8ad2c",
+        "sourceId": "d9842568-59d2-4c25-bdae-592f7cdad861",
+        "sourceName": "0a658/Accela/Accela/Accela_Inspections_Utilities_arcmap (MapServer)/Pro Rata Projects - PU",
+        "targetId": "000171c7-4e5a-4931-a899-a1cfa4d272cf",
+        "targetName": "0a658/Accela/Accela/Accela_Inspections_Utilities_arcmap (MapServer)/Pro Rata Projects - PU/OBJECTID"
+      }
+    ],
+    "tags": []
+  },
+
+I want to create an array of attributes that I want to perform a bulk POST against the attributes/bulk end point. The attribute objects are in the attributes array in each file. But the new array for bulk posting should use the new UUID based on the mappings in my assetMappings.json file we created and exists in my sourceDir folder. The payload should look like this:
+id: id
+assetId: newUUID

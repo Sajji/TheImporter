@@ -1,17 +1,9 @@
 [
   {
-    "id": "0908cdd7-da06-48cf-9926-215d62dc7e83",
-    "name": "GIS Community",
-    "newName": "GIS Community - fedworld",
-    "description": "",
+    "id": "341ac8bd-c4e4-48d5-be3c-ff18701ac682",
+    "name": "Woffles",
+    "newName": "Woffles - fedworld",
     "parentId": "80155a20-5d70-416b-bc90-cb2a71a619e5",
-    "parentName": "gmoney"
-  },
-  {
-    "id": "e93a95b5-40e7-4c08-af23-16bece6507f4",
-    "name": "GIS Schemas",
-    "newName": "GIS Schemas - fedworld",
-    "parentId": "0908cdd7-da06-48cf-9926-215d62dc7e83",
-    "parentName": "GIS Community"
+    "parentName": "wofflesLandingZone"
   }
 ]
